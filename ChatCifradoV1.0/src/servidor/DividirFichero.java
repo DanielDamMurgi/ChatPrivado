@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servidor;
 
 import cliente.*;
@@ -12,54 +7,50 @@ import java.io.Serializable;
  *
  * @author usuario
  */
-public class DividirFichero implements Serializable{
-    
-    //ATRIBUTOS
-    private String nombreFich;
-    private boolean ultimoTrozo;
-    private int bytesValidos;
-    private byte [] trozo=new byte[1024];
-    
-    //CONSTRUCTOR
+public class DividirFichero implements Serializable {
 
+    //ATRIBUTOS
+    private String nombre;
+    private int bytes;
+    private boolean ultDivFich;
+    private byte[] divFich = new byte[1024];
+
+    //CONSTRUCTOR
     public DividirFichero() {
     }
 
     // GETTERS 
-    public String getNombreFich() {
-        return nombreFich;
+    public String getNombre() {
+        return nombre;
     }
 
-    public boolean isUltimoTrozo() {
-        return ultimoTrozo;
+    public int getBytes() {
+        return bytes;
     }
 
-    public int getBytesValidos() {
-        return bytesValidos;
+    public boolean isUltDivFich() {
+        return ultDivFich;
     }
 
-    public byte[] getTrozo() {
-        return trozo;
+    public byte[] getDivFich() {
+        return divFich;
     }
-    
+
     // SETTERS
-
-    public void setNombreFich(String nombreFich) {
-        this.nombreFich = nombreFich;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public void setUltimoTrozo(boolean ultimoTrozo) {
-        this.ultimoTrozo = ultimoTrozo;
+    public void setBytes(int bytes) {
+        this.bytes = bytes;
     }
 
-    public void setBytesValidos(int bytesValidos) {
-        this.bytesValidos = bytesValidos;
+    public void setUltDivFich(boolean ultDivFich) {
+        this.ultDivFich = ultDivFich;
     }
 
-    public void setTrozo(byte[] trozo) {
-        this.trozo = trozo;
+    public void setDivFich(byte[] divFich) {
+        this.divFich = divFich;
     }
-    
-    
-    
+
 }

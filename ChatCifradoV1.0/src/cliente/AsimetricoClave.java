@@ -14,16 +14,15 @@ import javax.crypto.Cipher;
 /*
     CLASE QUE DESCIFRA LA CLAVE INICIAL QUE ENVIA EL SERVIDOR AL CLIENTE A TRAVÉS DE CIFRADO
     ASIMETRICO.
-*/
+ */
 public class AsimetricoClave {
 
     // ATRIBUTOS
     private static String keystore = "/home/prueba1/.keystore", claveAlmacen = "prueba1", keyClaves = "claveprueba1", claveBuena;
     private static char[] claveAlmacenc = claveAlmacen.toCharArray();
     private static char[] keyClavesc = keyClaves.toCharArray();
-    private static byte[] clavec=null;
-    
-    
+    private static byte[] clavec = null;
+
     // CONSTRUCCTORES
     public AsimetricoClave() {
 
@@ -38,14 +37,13 @@ public class AsimetricoClave {
     public static String getClaveBuena() {
         return claveBuena;
     }
-    
+
     //SETTERS
     public void setClaveBuena(String claveBuena) {
         AsimetricoClave.claveBuena = claveBuena;
     }
-    
-//-------------------------------------------------------------------------------------------------
 
+//-------------------------------------------------------------------------------------------------
     // METODO PARA DESCIFRAR DE FORMA ASIMETRICA
     public static void descifrar() {
         try (

@@ -38,22 +38,21 @@ public class HiloCliente implements Runnable {
     private byte[] contraseñaFinalBytes;
     private SecretKey claveSimetrica;
     private Cipher cifrar;
-    
+
     // CONSTRUCTOR
     public HiloCliente(BufferedReader l, String clave, Socket socket) {
         lectura = l;
         this.contraseña = clave;
         this.socket = socket;
     }
-    
+
 // --------------------------------------------------------------------------------------
-    
     // METODO QUE LEE LOS MENSAJES QUE SON ENVIADOS POR EL SERVIDOR Y OTROS USUARIOS
     @Override
     public void run() {
         String cad = " ";
 
-        while (cad != null) { 
+        while (cad != null) {
             try {
                 cad = lectura.readLine();
                 String aux = desencriptar(cad);
@@ -75,9 +74,8 @@ public class HiloCliente implements Runnable {
             }
         }
     } // FIN METODO RUN
-    
-// --------------------------------------------------------------------------------------   
 
+// --------------------------------------------------------------------------------------   
     public byte[] decodBase64(String a) {
         Base64.Decoder decoder = Base64.getDecoder();
         byte[] decodedByteArray = decoder.decode(a);
@@ -86,7 +84,7 @@ public class HiloCliente implements Runnable {
 
     // METODO QUE DESENCRIPTA LOS MENSAJES QUE LE LLEGAN AL CLIENTE
     public String desencriptar(String frase) {
-        
+
         try {
             contraseñaBytes = contraseña.getBytes("UTF8");
             contraseñaFinalBytes = copyOf(contraseñaBytes, 24);
@@ -117,5 +115,5 @@ public class HiloCliente implements Runnable {
 
         return fraseBuena;
     } // FIN METODO DESENCRIPTAR
-    
+
 }

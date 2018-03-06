@@ -26,7 +26,5 @@ public class Secreto implements Serializable {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
-    
 
 }

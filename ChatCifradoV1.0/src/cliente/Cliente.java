@@ -45,12 +45,14 @@ public class Cliente {
     private static Secreto clave;
     private static boolean baneado = false;
     private static AsimetricoClave asimetricoClave;
-    
+
     //ATRIBUTOS FICHERO
-   private static File fichero;
-   private static Object fichObject=null;
-   private static String directorio;
-   
+    private static File fichero;
+    private static Object fichObject = null;
+    private static String directorio;
+    private static boolean generado = false;
+    private static DividirFichero divFich;
+
     // GETTERS
     public static boolean isBaneado() {
         return baneado;
@@ -102,8 +104,6 @@ public class Cliente {
                 PrintWriter salida = new PrintWriter(tuberia.getOutputStream(), true);//envia mensajes por la tuberia
                 ObjectInputStream OIS = new ObjectInputStream(tuberia.getInputStream());) {
 
-            
-            
             Object c = OIS.readObject();
             if (c instanceof Secreto) {
                 clave = (Secreto) c; // recibe el objeto que contiene la clave cifrada
@@ -184,38 +184,44 @@ public class Cliente {
     } //FIN METODO ENCRIPTAR
 
     //-------------------------------------------------------------------------------------------------
-    public static void recibirFichero(ObjectInputStream in, File fich){
-        try{
-                        DividirFichero trozo;
-            boolean creado=false;
-            FileOutputStream fos=null;
-            do{
-                trozo=new DividirFichero();
-                fichObject=in.readObject();
-                directorio= System.getProperty("user.home");
-                if(fichObject instanceof DividirFichero){
-                    trozo = (DividirFichero)fichObject;
-                    if(!creado){
-                        fich=new File(directorio+"/"+trozo.getNombreFich());
-                        try{
-                            fos = new FileOutputStream(fich);  
-                            creado=true;
-                        }catch(Exception ex){
-                            System.out.println("Error: "+ ex.getMessage());
-                        };              
+    public static void recibirFichero(ObjectInputStream in, File fich) {
+        try {
+
+            FileOutputStream fos = null;
+            do {
+                divFich = new DividirFichero();
+
+                fichObject = in.readObject();
+
+                directorio = System.getProperty("user.home");
+
+                if (fichObject instanceof DividirFichero) {
+                    divFich = (DividirFichero) fichObject;
+
+                    if (!generado) {
+                        fich = new File(directorio + "/" + divFich.getNombre());
+                        try {
+                            fos = new FileOutputStream(fich);
+                            generado = true;
+
+                        } catch (Exception ex) {
+                            System.out.println("Error: " + ex.getMessage());
+                        };
                     }
-                    fos.write(trozo.getTrozo(), 0, trozo.getBytesValidos()); 
-                    System.out.println("Archivo de normas descargado en: "+fich.getPath());
-                }
-                else
+
+                    fos.write(divFich.getDivFich(), 0, divFich.getBytes());
+                    System.out.println("Archivo de normas descargado en: " + fich.getPath());
+
+                } else {
                     System.out.println("Error con el tipo de fichero");
+                }
                 {
                     break;
                 }
-            }while(!trozo.isUltimoTrozo());
-        }catch(Exception ex){
+            } while (!divFich.isUltDivFich());
+        } catch (Exception ex) {
             System.out.println("Error: " + ex.getMessage());
-            
+
         }
     }
-    }
+}

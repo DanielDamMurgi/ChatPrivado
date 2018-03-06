@@ -63,7 +63,7 @@ public class HiloServidor implements Runnable {
 
     SecretKey claveSimetrica;
     Cipher cifrar;
-    
+
     AsimetricoClave asimetricoClave;
 
     //CONSTRUCTOR
@@ -128,7 +128,7 @@ public class HiloServidor implements Runnable {
 
 // ------------------------------------------------------------------------------------------
     //metodo que muestra una introduccion a un cliente que se acaba de conectar con el nombre del cliente y los comandos del servidor
-    public void logIn() { 
+    public void logIn() {
         cli.getSalida().println(encriptar("//////////// " + cli.getNomCli() + " bienvenido al servidor de chat ////////////"));
         cli.getSalida().println(encriptar("/////////////////////// COMANDOS DEL SERVIDOR ////////////////////"));
         cli.getSalida().println(encriptar("\n\t/h - mostrar ayuda"));
@@ -139,7 +139,7 @@ public class HiloServidor implements Runnable {
 
 // ------------------------------------------------------------------------------------------
     // metodo que sirve para que un usuario se pueda cambiar el nombre por defecto
-    public void cambiarNombre() throws IOException { 
+    public void cambiarNombre() throws IOException {
         cli.getSalida().println("Inserta en nuevo nombre");
 
         String nombre = entrada.readLine();
@@ -164,14 +164,14 @@ public class HiloServidor implements Runnable {
                 ObjectOutputStream OOS = new ObjectOutputStream(socket.getOutputStream());) {
 
             agregarCliente(nomCli, entrada, salida, false);
-            
+
             contraseña = clave.getSecretKey();
-            asimetricoClave= new AsimetricoClave(clave.getSecretKey()); // cifra la clave ccon cifrado asimetrico
+            asimetricoClave = new AsimetricoClave(clave.getSecretKey()); // cifra la clave ccon cifrado asimetrico
             clave.setSecretKey(asimetricoClave.cifrar());
-        
+
             OOS.writeObject(clave); // envia el objeto que contiene la clave cifrada al cliente
             enviarFichero(OOS);
-            
+
             conexion("conectado al");
             logIn();
 
@@ -185,9 +185,7 @@ public class HiloServidor implements Runnable {
 
                 mensaje = entrada.readLine();
 
-                
-                    mensaje = desencriptar(mensaje);
-                
+                mensaje = desencriptar(mensaje);
 
                 if (mensaje.trim().equals("/x") || mensaje.trim().equals("/n") || mensaje.trim().equals("/l") || mensaje.trim().equals("/v") || mensaje.trim().equals("/h")) {
 
@@ -301,40 +299,39 @@ public class HiloServidor implements Runnable {
 
         return fraseFinalCifrada;
     }
-    
+
     private void enviarFichero(ObjectOutputStream OOS) {
-        
+
         int leidos = 0;
         DividirFichero dividirFich;
         fichero = new File(nomFich);
 
         try (
-                
                 InputStream isFich = new FileInputStream(fichero);
                 BufferedInputStream bisFich = new BufferedInputStream(isFich);) {
-            
+
             do {
                 dividirFich = new DividirFichero();
-                dividirFich.setNombreFich(nomFich);
-                leidos = bisFich.read(dividirFich.getTrozo());
+                dividirFich.setNombre(nomFich);
+                leidos = bisFich.read(dividirFich.getDivFich());
 
                 if (leidos < 0) {
-                    
+
                     break;
                 }
-                
-                dividirFich.setBytesValidos(leidos);
-                
+
+                dividirFich.setBytes(leidos);
+
                 if (leidos < 1024) {
-                    dividirFich.setUltimoTrozo(true);
+                    dividirFich.setUltDivFich(true);
                 } else {
-                    dividirFich.setUltimoTrozo(false);
+                    dividirFich.setUltDivFich(false);
                 }
                 OOS.writeObject(dividirFich);
 
-            } while (!dividirFich.isUltimoTrozo());
+            } while (!dividirFich.isUltDivFich());
             System.out.println("Archivo enviado correctamente");
-            
+
         } catch (Exception ex) {
             System.out.println("Error: " + ex.getMessage());
         }

@@ -64,10 +64,8 @@ public class HiloEnviar implements Runnable {
     }
 
 // ------------------------------------------------------------------------------------------
-
     // METODO PARA ENCCRIPTAR LOS MENSAJES QUE SE ENVIAN A LOS CLIENTES.
     public String encriptar(String frase) {
-       
 
         try {
             contraseñaBytes = contraseña.getBytes("UTF8");
@@ -98,15 +96,14 @@ public class HiloEnviar implements Runnable {
     } // FIN METODO ENCRIPTAR
 
 // ------------------------------------------------------------------------------------------
-    
     // hilo que envia los mensajes escrtitos desde el servidor a los clientes y la desconexion del servidor
     @Override
-    public void run() { 
+    public void run() {
 
         while (mensaje != null) {
             mensaje = teclado.nextLine();
             encontrado = false;
-            
+
             if (mensaje.trim().equals("/x") || mensaje.trim().equals("/ban") || mensaje.trim().equals("/ext")) {
                 if (mensaje.trim().equals("/x")) {
                     System.out.println("Servidor => El servidor se desconectará en 120 seg ");

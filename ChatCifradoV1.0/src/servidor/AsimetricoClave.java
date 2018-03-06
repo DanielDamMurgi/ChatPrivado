@@ -18,19 +18,19 @@ import javax.crypto.Cipher;
 
 /*
     CLASE PARA CIFRAR LA CLAVE QUE SE ENVIA A LOS CLIENTES DE FORMA ASIMETRICA
-*/
+ */
 public class AsimetricoClave {
 
     // ATRIBUTOS
-    private String claveAlmacen = "prueba2", keystore = "/home/prueba2/.keystore", clave, claveb64="";
+    private String claveAlmacen = "prueba2", keystore = "/home/prueba2/.keystore", clave, claveb64 = "";
     private char[] passAlmacen = claveAlmacen.toCharArray();
 
     // CONSTRUCTOR
     public AsimetricoClave(String c) {
         clave = c;
-        
+
     }
-    
+
     // METODO PARA CIFRAR LA CLAVE CON CIFRADO ASIMETRICO
     public String cifrar() {
         try (

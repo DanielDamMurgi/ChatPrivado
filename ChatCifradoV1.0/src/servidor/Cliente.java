@@ -40,7 +40,7 @@ public class Cliente {
     public BufferedReader getEntrada() {
         return entrada;
     }
-    
+
     // SETTERS
     public void setNomCli(String nomCli) {
         this.nomCli = nomCli;
