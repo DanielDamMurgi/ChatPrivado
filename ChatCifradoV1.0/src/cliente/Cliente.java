@@ -49,7 +49,7 @@ public class Cliente {
     //ATRIBUTOS FICHERO
     private static File fichero;
     private static Object fichObject = null;
-    private static String directorio;
+    private static String directorio, mensRutaFich;
     private static boolean generado = false;
     private static DividirFichero divFich;
 
@@ -114,7 +114,9 @@ public class Cliente {
             contraseña = asimetricoClave.getClaveBuena();
 
             leerMensajes(entrada, contraseña, tuberia); //metodo que contiene un hilo para leer y mostrar los mensajes que envia el servidor
-
+            
+            System.out.println(mensRutaFich);
+            
             while (mensaje != null) { //while que envia los mensajes que escribe el cliente al servidor.
                 if (baneado) {
                     System.out.println("......");
@@ -210,7 +212,7 @@ public class Cliente {
                     }
 
                     fos.write(divFich.getDivFich(), 0, divFich.getBytes());
-                    System.out.println("Archivo de normas descargado en: " + fich.getPath());
+                    mensRutaFich="Archivo de normas descargado en: " + fich.getPath();
 
                 } else {
                     System.out.println("Error con el tipo de fichero");
