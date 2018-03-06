@@ -1,3 +1,4 @@
+/*github version*/
 package cliente;
 
 import java.io.BufferedReader;
@@ -44,7 +45,11 @@ public class Cliente {
     private static Secreto clave;
     private static boolean baneado = false;
     private static AsimetricoClave asimetricoClave;
-    private static File fichero;
+    
+    //ATRIBUTOS FICHERO
+   private static File fichero;
+   private static Object fichObject=null;
+   private static String directorio;
    
     // GETTERS
     public static boolean isBaneado() {
@@ -181,36 +186,35 @@ public class Cliente {
     //-------------------------------------------------------------------------------------------------
     public static void recibirFichero(ObjectInputStream in, File fich){
         try{
-            int read=1;
-            Object aux;
-            DividirFichero trozo;
+                        DividirFichero trozo;
             boolean creado=false;
             FileOutputStream fos=null;
             do{
                 trozo=new DividirFichero();
-                aux=in.readObject();
-                if(aux instanceof DividirFichero){
-                    trozo = (DividirFichero)aux;
-                    //creo el fichero solo la primera vez
+                fichObject=in.readObject();
+                directorio= System.getProperty("user.home");
+                if(fichObject instanceof DividirFichero){
+                    trozo = (DividirFichero)fichObject;
                     if(!creado){
-                        fich=new File("/home/usuario/Escritorio/"+trozo.getNombreFich());
+                        fich=new File(directorio+"/"+trozo.getNombreFich());
                         try{
                             fos = new FileOutputStream(fich);  
                             creado=true;
-                        }catch(Exception ex){};              
+                        }catch(Exception ex){
+                            System.out.println("Error: "+ ex.getMessage());
+                        };              
                     }
-                    fos.write(trozo.getTrozo(), 0, trozo.getBytesValidos());
-                   
+                    fos.write(trozo.getTrozo(), 0, trozo.getBytesValidos()); 
+                    System.out.println("Archivo de normas descargado en: "+fich.getPath());
                 }
                 else
+                    System.out.println("Error con el tipo de fichero");
                 {
-                    // Si no es del tipo esperado, se marca error y se termina el bucle
-                    System.err.println("Mensaje no esperado " + aux.getClass().getName());
                     break;
                 }
             }while(!trozo.isUltimoTrozo());
         }catch(Exception ex){
-            System.out.println("Error Recibiendo Fichero: " + ex.getMessage());
+            System.out.println("Error: " + ex.getMessage());
             
         }
     }
