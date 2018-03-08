@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servidor;
 
 import java.io.BufferedInputStream;
@@ -14,19 +9,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import static java.util.Arrays.copyOf;
 import java.util.Base64;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -122,7 +109,7 @@ public class HiloServidor implements Runnable {
     public void mostrarAyuda() {
         cli.getSalida().println(encriptar("\n\t/l - mostrar los clientes conectados al chat"));
         cli.getSalida().println(encriptar("\n\t/v - version del servidor"));
-        cli.getSalida().println(encriptar("\n\t/n - cambiar nombre"));
+        //cli.getSalida().println(encriptar("\n\t/n - cambiar nombre"));
         cli.getSalida().println(encriptar("\n\t/x - Salir\n"));
     }
 
@@ -140,16 +127,19 @@ public class HiloServidor implements Runnable {
 // ------------------------------------------------------------------------------------------
     // metodo que sirve para que un usuario se pueda cambiar el nombre por defecto
     public void cambiarNombre() throws IOException {
-        cli.getSalida().println("Inserta en nuevo nombre");
+        cli.getSalida().println(encriptar("Inserta en nuevo nombre"));
 
         String nombre = entrada.readLine();
+        
+        
+
         String nombreDefecto = cli.getNomCli();
         cli.setNomCli(nombre);
-        cli.getSalida().println("Nombre cambiado a " + cli.getNomCli());
+        cli.getSalida().println(encriptar("Nombre cambiado a " + cli.getNomCli()));
         System.out.println("El " + nombreDefecto + " se ha cambiado el nombre a " + cli.getNomCli());
         for (Cliente c : cliente) {
             if (c != cli) {
-                c.getSalida().println("\n\t\tServidor => El " + nombreDefecto + " se ha cambiado el nombre a " + cli.getNomCli() + "\n");
+                c.getSalida().println(encriptar("\n\t\tServidor => El " + nombreDefecto + " se ha cambiado el nombre a " + cli.getNomCli() + "\n"));
 
             }
         }
@@ -170,9 +160,11 @@ public class HiloServidor implements Runnable {
             clave.setSecretKey(asimetricoClave.cifrar());
 
             OOS.writeObject(clave); // envia el objeto que contiene la clave cifrada al cliente
+
             enviarFichero(OOS);
 
             conexion("conectado al");
+
             logIn();
 
             HiloEnviar hiloEnviar = new HiloEnviar(cliente, socket, contraseña);
@@ -192,21 +184,13 @@ public class HiloServidor implements Runnable {
                     if (mensaje.trim().equals("/x")) {//salida del chat
                         conexion("desconectado del");
                         break;
-                    }
-
-                    if (mensaje.trim().equals("/l")) {//mostrar los clientes conectados
+                    } else if (mensaje.trim().equals("/l")) {//mostrar los clientes conectados
                         mostrarConectados();
-                    }
-
-                    if (mensaje.trim().equals("/h")) {//mostrar la ayuda 
+                    } else if (mensaje.trim().equals("/h")) {//mostrar la ayuda 
                         mostrarAyuda();
-                    }
-
-                    if (mensaje.trim().equals("/n")) {//cambiar el ombre por defecto
-                        //cambiarNombre();
-                    }
-
-                    if (mensaje.trim().equals("/v")) {//muestra la version de chat
+                    } else if (mensaje.trim().equals("/n")) {//cambiar el nombre por defecto
+                        cambiarNombre();
+                    } else if (mensaje.trim().equals("/v")) {//muestra la version de chat
                         cli.getSalida().println(encriptar("Chat Versión V1.3"));
                     }
 
@@ -246,18 +230,8 @@ public class HiloServidor implements Runnable {
 
             fraseDesencriptada = new String(frasebytedescifrada);
 
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(HiloServidor.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(HiloServidor.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalBlockSizeException ex) {
-            Logger.getLogger(HiloServidor.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BadPaddingException ex) {
-            Logger.getLogger(HiloServidor.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(HiloServidor.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchPaddingException ex) {
-            Logger.getLogger(HiloServidor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            System.out.println("Error: " + ex.getMessage());
         }
 
         return fraseDesencriptada;
@@ -283,18 +257,8 @@ public class HiloServidor implements Runnable {
             fraseCifrada = cifrar.doFinal(fraseBytes);
             fraseFinalCifrada = codBase64(fraseCifrada);
 
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchPaddingException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalBlockSizeException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BadPaddingException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            System.out.println("Error: " + ex.getMessage());
         }
 
         return fraseFinalCifrada;
@@ -302,7 +266,7 @@ public class HiloServidor implements Runnable {
 
     private void enviarFichero(ObjectOutputStream OOS) {
 
-        int leidos = 0;
+        int leido = 0;
         DividirFichero dividirFich;
         fichero = new File(nomFich);
 
@@ -313,16 +277,16 @@ public class HiloServidor implements Runnable {
             do {
                 dividirFich = new DividirFichero();
                 dividirFich.setNombre(nomFich);
-                leidos = bisFich.read(dividirFich.getDivFich());
+                leido = bisFich.read(dividirFich.getDivFich());
 
-                if (leidos < 0) {
+                if (leido < 0) {
 
                     break;
                 }
 
-                dividirFich.setBytes(leidos);
+                dividirFich.setBytes(leido);
 
-                if (leidos < 1024) {
+                if (leido < 1024) {
                     dividirFich.setUltDivFich(true);
                 } else {
                     dividirFich.setUltDivFich(false);

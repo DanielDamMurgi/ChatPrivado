@@ -6,22 +6,12 @@
 package cliente;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import static java.util.Arrays.copyOf;
 import java.util.Base64;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import servidor.Secreto;
 
 /**
  *
@@ -69,8 +59,8 @@ public class HiloCliente implements Runnable {
 
                     System.out.println(aux);
                 }
-            } catch (IOException ex) {
-
+            } catch (Exception ex) {
+                System.out.println("Error: "+ex.getMessage());
             }
         }
     } // FIN METODO RUN
@@ -97,20 +87,8 @@ public class HiloCliente implements Runnable {
 
             fraseBuena = new String(frasebytedescifrada);
 
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(HiloCliente.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(HiloCliente.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchPaddingException ex) {
-            Logger.getLogger(HiloCliente.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(HiloCliente.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalBlockSizeException ex) {
-            Logger.getLogger(HiloCliente.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BadPaddingException ex) {
-            Logger.getLogger(HiloCliente.class.getName()).log(Level.SEVERE, null, ex);
-            //}catch(IllegalArgumentException e){
-
+        } catch (Exception ex) {
+            System.out.println("Error: "+ex.getMessage());
         }
 
         return fraseBuena;

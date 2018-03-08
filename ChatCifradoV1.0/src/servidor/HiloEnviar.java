@@ -5,22 +5,15 @@
  */
 package servidor;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import static java.lang.Thread.sleep;
 import java.net.Socket;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import static java.util.Arrays.copyOf;
 import java.util.Base64;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -78,18 +71,8 @@ public class HiloEnviar implements Runnable {
             fraseCifrada = cifrar.doFinal(fraseBytes);
             fraseFinalCifrada = codBase64(fraseCifrada);
 
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchPaddingException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalBlockSizeException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BadPaddingException ex) {
-            Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            System.out.println("Error: "+ex.getMessage());
         }
 
         return fraseFinalCifrada;
@@ -122,8 +105,8 @@ public class HiloEnviar implements Runnable {
                     try {
                         s.close();
                         System.exit(0);
-                    } catch (IOException ex) {
-                        Logger.getLogger(HiloEnviar.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        System.out.println("Error: "+ex.getMessage());
                     }
                 }
 

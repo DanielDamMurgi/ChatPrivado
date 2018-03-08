@@ -7,22 +7,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import static java.lang.Thread.sleep;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import static java.util.Arrays.copyOf;
 import java.util.Base64;
 import java.util.Scanner;
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.JOptionPane;
 import servidor.Secreto;
 import servidor.DividirFichero;
 
@@ -44,6 +39,7 @@ public class Cliente {
     private static Secreto clave;
     private static boolean baneado = false;
     private static AsimetricoClave asimetricoClave;
+    private static ObjectInputStream leerObjeto;
 
     //ATRIBUTOS FICHERO
     private static File fichero;
@@ -107,20 +103,24 @@ public class Cliente {
             if (c instanceof Secreto) {
                 clave = (Secreto) c; // recibe el objeto que contiene la clave cifrada
             }
-            recibirFichero(OIS, fichero);
+            leerObjeto=OIS;
+            recibirFichero(fichero);
 
             asimetricoClave = new AsimetricoClave(clave.getSecretKey()); // descifra la clave cifrada con cifrado asimetrico
             contraseña = asimetricoClave.getClaveBuena();
 
             leerMensajes(entrada, contraseña, tuberia); //metodo que contiene un hilo para leer y mostrar los mensajes que envia el servidor
             
-            System.out.println(mensRutaFich);
+            JOptionPane.showMessageDialog(null, mensRutaFich);
+            
+            //System.out.println(mensRutaFich);
             
             while (mensaje != null) { //while que envia los mensajes que escribe el cliente al servidor.
                 if (baneado) {
                     System.out.println("......");
                     sleep(420000);
                     baneado = false;
+                    System.out.println("Ya no estas baneado");
 
                 } else {
                     mensaje = teclado.nextLine();
@@ -167,32 +167,22 @@ public class Cliente {
 
             fraseFinalCifrada = codBase64(fraseCifrada);
 
-        } catch (UnsupportedEncodingException ex) {
-
-        } catch (NoSuchAlgorithmException ex) {
-
-        } catch (NoSuchPaddingException ex) {
-
-        } catch (InvalidKeyException ex) {
-
-        } catch (IllegalBlockSizeException ex) {
-
-        } catch (BadPaddingException ex) {
-
+        } catch (Exception ex) {
+                System.out.println("ERROR: "+ ex.getMessage());
         }
 
         return fraseFinalCifrada;
     } //FIN METODO ENCRIPTAR
 
     //-------------------------------------------------------------------------------------------------
-    public static void recibirFichero(ObjectInputStream in, File fich) {
+    public static void recibirFichero(File fich) {
         try {
 
             FileOutputStream fos = null;
             do {
                 divFich = new DividirFichero();
 
-                fichObject = in.readObject();
+                fichObject = leerObjeto.readObject();
 
                 directorio = System.getProperty("user.home");
 
