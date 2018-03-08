@@ -112,9 +112,7 @@ public class Cliente {
             leerMensajes(entrada, contraseña, tuberia); //metodo que contiene un hilo para leer y mostrar los mensajes que envia el servidor
             
             JOptionPane.showMessageDialog(null, mensRutaFich);
-            
-            //System.out.println(mensRutaFich);
-            
+                        
             while (mensaje != null) { //while que envia los mensajes que escribe el cliente al servidor.
                 if (baneado) {
                     System.out.println("......");
