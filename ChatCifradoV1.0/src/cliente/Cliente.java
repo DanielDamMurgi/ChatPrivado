@@ -19,6 +19,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
 import servidor.Secreto;
+import servidor.ClienteServ;
 import servidor.DividirFichero;
 
 /**
@@ -40,6 +41,7 @@ public class Cliente {
     private static boolean baneado = false;
     private static AsimetricoClave asimetricoClave;
     private static ObjectInputStream leerObjeto;
+    private static int cli;
 
     //ATRIBUTOS FICHERO
     private static File fichero;
@@ -98,15 +100,21 @@ public class Cliente {
                 BufferedReader entrada = new BufferedReader(new InputStreamReader(tuberia.getInputStream()));//lee los mensajes que se envian por la tuberia
                 PrintWriter salida = new PrintWriter(tuberia.getOutputStream(), true);//envia mensajes por la tuberia
                 ObjectInputStream OIS = new ObjectInputStream(tuberia.getInputStream());) {
+            
+            
 
+            String numCli= OIS.readUTF();
+            cli = Integer.valueOf(numCli);
+            System.out.println("id cli "+cli);
+            
             Object c = OIS.readObject();
             if (c instanceof Secreto) {
                 clave = (Secreto) c; // recibe el objeto que contiene la clave cifrada
             }
             leerObjeto=OIS;
             recibirFichero(fichero);
-
-            asimetricoClave = new AsimetricoClave(clave.getSecretKey()); // descifra la clave cifrada con cifrado asimetrico
+            
+            asimetricoClave = new AsimetricoClave(clave.getSecretKey(),cli); // descifra la clave cifrada con cifrado asimetrico
             contraseña = asimetricoClave.getClaveBuena();
 
             leerMensajes(entrada, contraseña, tuberia); //metodo que contiene un hilo para leer y mostrar los mensajes que envia el servidor
@@ -136,7 +144,7 @@ public class Cliente {
             }
 
         } catch (IOException ex) {
-
+            System.out.println("Error: "+ex.getMessage());
         }
 
     } //FIN METODO PRINCIPAL

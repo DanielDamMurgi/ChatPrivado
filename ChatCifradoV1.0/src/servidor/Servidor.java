@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 public class Servidor {
 
     private static Secreto clave;
+    private static AsimetricoClave asimetricoClave ;
 
     private static final int[] NUMEROS = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     private static final char[] MINUSCULAS = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
@@ -47,12 +48,15 @@ public class Servidor {
     public static void main(String[] args) {
         int numeroCliente = 1;
         int puerto = 23000;
-        ArrayList<Cliente> cliente = new ArrayList<>();
+        ArrayList<ClienteServ> cliente = new ArrayList<>();
+        
+        
 
         try (
                 ServerSocket socket = new ServerSocket(puerto);) {
             informacion();
             clave = new Secreto(generarClave());
+            
 
             while (true) {
                 HiloServidor hiloServidor = new HiloServidor(socket.accept(), numeroCliente++, cliente, clave);

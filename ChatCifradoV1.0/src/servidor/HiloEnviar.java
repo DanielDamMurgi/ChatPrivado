@@ -23,7 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class HiloEnviar implements Runnable {
 
-    ArrayList<Cliente> cliente;
+    ArrayList<ClienteServ> cliente;
 
     Socket s;
 
@@ -44,7 +44,7 @@ public class HiloEnviar implements Runnable {
 
     Scanner teclado = new Scanner(System.in);
 
-    public HiloEnviar(ArrayList<Cliente> cliente, Socket s, String clave) {
+    public HiloEnviar(ArrayList<ClienteServ> cliente, Socket s, String clave) {
         this.cliente = cliente;
         this.s = s;
         this.contraseña = clave;
@@ -94,7 +94,7 @@ public class HiloEnviar implements Runnable {
                         try {
                             sleep(10000);
                             System.out.println("Servidor => El servidor se desconectará en " + i + " seg");
-                            for (Cliente c : cliente) {
+                            for (ClienteServ c : cliente) {
 
                                 c.getSalida().println("Servidor => El servidor se desconectará en " + i + " seg");
                             }
@@ -112,13 +112,13 @@ public class HiloEnviar implements Runnable {
 
                 if (mensaje.trim().equals("/ban")) {
                     System.out.println("Inserta el cliente a banear: \n");
-                    for (Cliente c : cliente) {
+                    for (ClienteServ c : cliente) {
                         System.out.println(c.getNomCli());
                     }
 
                     clienteBaneado = teclado.nextLine();
 
-                    for (Cliente c : cliente) {
+                    for (ClienteServ c : cliente) {
                         if (clienteBaneado.trim().equals(c.getNomCli())) {
                             c.getSalida().println(encriptar("/ban"));
                             encontrado = true;
@@ -132,13 +132,13 @@ public class HiloEnviar implements Runnable {
 
                 if (mensaje.trim().equals("/ext")) {
                     System.out.println("Inserta el cliente a expulsar: \n");
-                    for (Cliente c : cliente) {
+                    for (ClienteServ c : cliente) {
                         System.out.println(c.getNomCli());
                     }
 
                     clienteBaneado = teclado.nextLine();
 
-                    for (Cliente c : cliente) {
+                    for (ClienteServ c : cliente) {
                         if (clienteBaneado.trim().equals(c.getNomCli())) {
                             c.getSalida().println(encriptar("/ext"));
                             cliente.remove(c);
@@ -152,7 +152,7 @@ public class HiloEnviar implements Runnable {
                 }
 
             } else {
-                for (Cliente c : cliente) {
+                for (ClienteServ c : cliente) {
                     c.getSalida().println(encriptar("Servidor => " + mensaje));
                 }
             }

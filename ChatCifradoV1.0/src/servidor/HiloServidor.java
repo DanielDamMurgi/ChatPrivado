@@ -24,13 +24,13 @@ import javax.crypto.spec.SecretKeySpec;
 public class HiloServidor implements Runnable {
 
     //ATRIBUTOS
-    Cliente cli;
+    ClienteServ cli;
     BufferedReader entrada;
     PrintWriter salida;
     Socket socket;
     int nomCli;
     String mensaje = "";
-    ArrayList<Cliente> cliente;
+    ArrayList<ClienteServ> cliente;
     Secreto clave;
     String nomFich = "normas.zip";
     File fichero = null;
@@ -54,7 +54,7 @@ public class HiloServidor implements Runnable {
     AsimetricoClave asimetricoClave;
 
     //CONSTRUCTOR
-    public HiloServidor(Socket socket, int nomCli, ArrayList<Cliente> cliente, Secreto clave) {
+    public HiloServidor(Socket socket, int nomCli, ArrayList<ClienteServ> cliente, Secreto clave) {
         this.socket = socket;
         this.nomCli = nomCli;
         this.cliente = cliente;
@@ -64,14 +64,14 @@ public class HiloServidor implements Runnable {
 // ------------------------------------------------------------------------------------------
     //metodo que agrega los clientes al arraylist de la clase Cliente
     public void agregarCliente(int numCli, BufferedReader ent, PrintWriter sal, boolean ban) {
-        cli = new Cliente(numCli, ent, sal, ban);
+        cli = new ClienteServ(numCli, ent, sal, ban);
         cliente.add(cli);
     }
 
 // ------------------------------------------------------------------------------------------
     //metodo para enviar los mensajes a los clientes conectados menos en que los envia
     public void enviarMensaje(String m) {
-        for (Cliente c : cliente) {
+        for (ClienteServ c : cliente) {
             if (c != cli) {
                 c.getSalida().println(encriptar(cli.getNomCli() + " => " + m));
             }
@@ -81,7 +81,7 @@ public class HiloServidor implements Runnable {
 // ------------------------------------------------------------------------------------------
     //metodo que muestra en el servidor y al resto de clientes en cliente que se acaba de conectar o desconectar
     public void conexion(String m) {
-        for (Cliente c : cliente) {
+        for (ClienteServ c : cliente) {
             if (c != cli) {
                 c.getSalida().println(encriptar("\n\t\tServidor => El " + cli.getNomCli() + " se ha " + m + " chat\n"));
 
@@ -95,7 +95,7 @@ public class HiloServidor implements Runnable {
     public void mostrarConectados() {
         cli.getSalida().println(encriptar("Clientes conectados =>"));
 
-        for (Cliente c : cliente) {
+        for (ClienteServ c : cliente) {
             if (c != cli) {
                 String conect = c.getNomCli();
                 cli.getSalida().println(encriptar("\t" + conect + "\n"));
@@ -137,7 +137,7 @@ public class HiloServidor implements Runnable {
         cli.setNomCli(nombre);
         cli.getSalida().println(encriptar("Nombre cambiado a " + cli.getNomCli()));
         System.out.println("El " + nombreDefecto + " se ha cambiado el nombre a " + cli.getNomCli());
-        for (Cliente c : cliente) {
+        for (ClienteServ c : cliente) {
             if (c != cli) {
                 c.getSalida().println(encriptar("\n\t\tServidor => El " + nombreDefecto + " se ha cambiado el nombre a " + cli.getNomCli() + "\n"));
 
@@ -156,9 +156,16 @@ public class HiloServidor implements Runnable {
             agregarCliente(nomCli, entrada, salida, false);
 
             contraseña = clave.getSecretKey();
-            asimetricoClave = new AsimetricoClave(clave.getSecretKey()); // cifra la clave ccon cifrado asimetrico
+            asimetricoClave = new AsimetricoClave(clave.getSecretKey(), nomCli); // cifra la clave ccon cifrado asimetrico
             clave.setSecretKey(asimetricoClave.cifrar());
-
+            
+            String numCli = String.valueOf(nomCli);
+            
+            
+            OOS.writeUTF(numCli);
+            
+            
+            
             OOS.writeObject(clave); // envia el objeto que contiene la clave cifrada al cliente
 
             enviarFichero(OOS);
@@ -189,7 +196,7 @@ public class HiloServidor implements Runnable {
                     } else if (mensaje.trim().equals("/h")) {//mostrar la ayuda 
                         mostrarAyuda();
                     } else if (mensaje.trim().equals("/n")) {//cambiar el nombre por defecto
-                        cambiarNombre();
+                        //cambiarNombre();
                     } else if (mensaje.trim().equals("/v")) {//muestra la version de chat
                         cli.getSalida().println(encriptar("Chat Versión V1.3"));
                     }
